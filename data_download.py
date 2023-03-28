@@ -10,6 +10,7 @@ import os
 
 # Download the .tsv into ______ folder
 
+
 organism = 'Escherichia coli'
 fields = '--fields accession,assminfo-sequencing-tech'
 query = f"datasets summary genome taxon '{organism}' --assembly-level ‘complete’  --as-json-lines | dataformat tsv genome {fields}"

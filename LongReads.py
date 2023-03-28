@@ -25,12 +25,13 @@ os.chdir(my_env)
 
 # PART 0 ----
 # Make directories and paths
-folder_names = ('1_data_raw', '2_data_clean', '3_output', '4_data_test', '5_blast')
-p_data_raw = folder_names[0]
-p_data_clean = folder_names[1]
-p_out = folder_names[2]
-p_test = folder_names[3]
+folder_names = ('1_raw_data', '2_filtered_data', '3_test_data', '4_output', '5_blast', '6_scripts')
+p_raw_data = folder_names[0]
+p_filt_data = folder_names[1]
+p_test_data = folder_names[2]
+p_out = folder_names[3]
 p_blast = folder_names[4]
+p_scripts = folder_names[5]
 
 # this is primarily due to github not saving empty directories
 # need to be able to create folder structure from scratch if needed  
