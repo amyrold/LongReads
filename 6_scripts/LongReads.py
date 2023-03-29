@@ -15,12 +15,13 @@ from Bio import SeqIO
 # determine the path of the directory this file is located in
 # idea taken from here: https://www.pythonanywhere.com/forums/topic/13464/
 my_env = os.path.join(os.path.dirname(__file__)) #comment out unless running as script
-# my_env = '/Users/aaronmyrold/GitHub/LongReads' #aaron
+# my_env = '/Users/aaronmyrold/GitHub/LongReads/6_scripts' #aaron
 # my_env = '' #niru
 # my_env = '' #japani
 # my_env = '' #asad
 # set the current working directory to that folder so that remaining paths can function properly
-os.chdir(my_env)
+os.chdir(my_env+ '/..')
+
 
 
 # PART 0 ----
@@ -39,3 +40,4 @@ for i in folder_names:
     if not os.path.exists(i):
         os.makedirs(i)
         
+# big changes
