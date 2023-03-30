@@ -14,11 +14,13 @@ from Bio import Entrez
 
 organism = 'Escherichia coli'
 fields = '--fields accession,assminfo-sequencing-tech'
-query = f"datasets summary genome taxon '{organism}' --assembly-level ‘complete’  --as-json-lines | dataformat tsv genome {fields}"
+query = f"datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | dataformat tsv genome {fields}" + " > ecoli.tsv"
+os.system(query)
+
 
 # convert to pandas table
 cwd = os.getcwd()
-tsv = pd.read_csv(cwd + '/compbio.tsv', delimiter= "\t") #replace the path with where the tsv file is
+tsv = pd.read_csv(cwd + '/ecoli.tsv', delimiter= "\t") #replace the path with where the tsv file is
 
 # drop rows that are not long read (pacbio, nanopore, ???)
 f = open(cwd + '/longreads.tsv', 'w') #replace this with the path to the longreads.tsv
@@ -46,8 +48,5 @@ acc_list
 os.makedirs(cwd + '/data_raw')
 os.chdir(cwd+ '/data_raw')
 
-for k in acc_list:
-    os.system("datasets download gene accession " + k)
-    
-
+handle = Entrez.efetch(db="assembly", id=acc_list)
 
