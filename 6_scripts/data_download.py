@@ -11,7 +11,6 @@ from Bio import Entrez
 
 # convert to pandas table
 cwd = os.getcwd()
-tsv = pd.read_csv(cwd + '/ecoli.tsv', delimiter= "\t") #replace the path with where the tsv file is
 
 # PART 0 ----
 # Make directories and paths
@@ -30,6 +29,7 @@ fields = '--fields accession,assminfo-sequencing-tech'
 query = f"datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | dataformat tsv genome {fields}" + " > ecoli.tsv"
 os.system(query)
 
+tsv = pd.read_csv(cwd + '/ecoli.tsv', delimiter= "\t") #replace the path with where the tsv file is
 
 # drop rows that are not long read (pacbio, nanopore, ???)
 f = open(cwd + '/longreads.tsv', 'w') #replace this with the path to the longreads.tsv
