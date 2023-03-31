@@ -9,7 +9,6 @@ import os
 import pandas as pd
 from Bio import Entrez
 
-# convert to pandas table
 cwd = os.getcwd()
 
 # PART 0 ----
@@ -54,8 +53,7 @@ acc_list
 # either way, use accessions to download the appropriate genomes
 
 # store genomes in data_raw folder
-os.makedirs(cwd + '/data_raw')
-os.chdir(cwd+ '/data_raw')
+os.makedirs(p_raw_data)
 
 
 for i in acc_list:
@@ -63,4 +61,5 @@ for i in acc_list:
 
 
 handle = Entrez.efetch(db="assembly", id=acc_list)
+
 
