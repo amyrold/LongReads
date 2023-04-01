@@ -1,6 +1,6 @@
-
 import os
 import subprocess
+import pandas as pd
 from Bio import Entrez
 from Bio import SeqIO
 # from Bio.Blast import NCBIWWW
@@ -37,7 +37,7 @@ entrezQuery = "J01859"
 os.system(f'esearch -db nucleotide -query "{entrezQuery}" | efetch -format fasta > {p_blast}/16s.fasta')
 
 # Make blast database
-os.system(f'makeblastdb -in {p_blast}/blast.fasta -out {p_blast}/ec16S -title 16S -dbtype nucl')
+os.system(f'makeblastdb -in {p_blast}/blast.fasta -out {p_blast}/16S -title 16S -dbtype nucl')
 
 
 # Make blast query
@@ -45,11 +45,11 @@ input_file = f'{p_raw_data}/wgs.fasta'
 output_file = f'{p_blast}/myresults.csv'
 # using the formatting requested
 formatting = '10 sacc pident qstart qend evalue'
-os.system(f'blastn -query {input_file} -db {p_blast}/BPvirus -out {output_file} -outfmt "{formatting}"')
+os.system(f'blastn -query {input_file} -db {p_blast}/16S -out {output_file} -outfmt "{formatting}"')
 
 
 
-
+tsv = pd.read_csv(f'{p_raw_data}/{input_file}') #replace the path with where the tsv file is
 
 
 
