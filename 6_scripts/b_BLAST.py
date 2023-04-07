@@ -57,7 +57,7 @@ formatting = '10 qacc pident qstart qend evalue'
 os.system(f'blastn -query {input_file} -db {p_blast}/16S -out {output_file} -outfmt "{formatting}"')
 
 
-# PART 2 -
+# PART 2 ----
 # Trim wgs reads to just the regions determined via 16S BLAST
 # Read in the BLASTn output as a pandas table
 pos16S = pd.read_csv(f'{output_file}', names=['accession','pident','start','end','ev']) 
@@ -79,6 +79,11 @@ def store_16S(row):
 
 # apply the store_16S function across all rows in out BLAST output pd table
 pos16S.apply(store_16S, axis=1)
+
+# PART 3 ----
+# format and write to output
+with open(f"{p_filt_data}/trim.fasta", "w") as output_handle:
+    SeqIO.write(trim_dict.values(), output_handle, "fasta")
 
 
 
