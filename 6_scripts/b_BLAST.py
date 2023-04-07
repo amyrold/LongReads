@@ -66,6 +66,29 @@ wgs_dict = SeqIO.to_dict(SeqIO.parse(f'{p_raw_data}/wgs.fasta', 'fasta'))
 # define dictionary to store trimmed sequences
 trim_dict = {}
 
+def rename_acc(subset):
+    new_acc = []
+    i = 1
+    for acc in subset['accession']:
+        new_acc.append(f'{acc}_{i}')
+    subset.accession = pd.DataFrame(new_acc)
+    return subset
+
+def split_acc(seq_df):
+    unique = seq_df['accession'].unique()
+    final_df = pd.DataFrame(columns=seq_df.columns)
+    for acc in unique:
+        subset = seq_df.filter(like=acc, axis=0)
+        final_df = pd.concat(final_df, rename_acc(subset))
+    return final_df
+
+split_acc(pos16S)
+
+# def split_acc(seq_df):
+#     uniques = dict(tuple(seq_df.groupby('accession')))
+
+
+
 # Function to use the BLASTn output to trim and store in new dict 
 def trim_fa(accession, start, stop):
     trim_dict[accession] = wgs_dict[accession][start:stop]
