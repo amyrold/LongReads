@@ -9,7 +9,6 @@ import os
 import pandas as pd
 from Bio import Entrez
 
-cwd = os.getcwd()
 
 # PART 0 ----
 # Make directories and paths
@@ -21,17 +20,21 @@ p_out = folder_names[3]
 p_blast = folder_names[4]
 p_scripts = folder_names[5]
 
+cwd = os.getcwd()
+
+os.chdir("..")
+print(os.getcwd())
 
 # Download the .tsv into ______ folder
 organism = 'Escherichia coli'
 fields = '--fields accession,assminfo-sequencing-tech'
-query = f"datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | dataformat tsv genome {fields}" + " > ecoli.tsv"
+query = f"datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | dataformat tsv genome {fields}" + f" > {p_raw_data}/ecoli.tsv"
 os.system(query)
 
-tsv = pd.read_csv(cwd + '/ecoli.tsv', delimiter= "\t") #replace the path with where the tsv file is
+tsv = pd.read_csv(f'{p_raw_data}/ecoli.tsv', delimiter= "\t") #replace the path with where the tsv file is
 
 # drop rows that are not long read (pacbio, nanopore, ???)
-f = open(cwd + '/longreads.tsv', 'w') #replace this with the path to the longreads.tsv
+f = open(f'{p_raw_data}/longreads.tsv', 'w') #replace this with the path to the longreads.tsv
 
 for row_num in tsv.index:
     acc = str(tsv['Assembly Accession'][row_num])
@@ -44,22 +47,14 @@ for row_num in tsv.index:
         
 f.close()
 # Store the accession column as a list
-acc = pd.read_csv(cwd + '/longreads.tsv', sep = "\t", names = ['Accession', "Sequencing Technology"])
+acc = pd.read_csv(f'{p_raw_data}/longreads.tsv', sep = "\t", names = ['Accession', "Sequencing Technology"])
 acc_list = list(acc['Accession'].values)
-acc_list
 
-# iterate or query full list?
+# Iterate through the accession list and store the genomes in a multi fasta file
 
-# either way, use accessions to download the appropriate genomes
-
-# store genomes in data_raw folder
-os.makedirs(p_raw_data)
-
-
-for i in acc_list:
+for i in acc_list[0:5]:
     os.system(f'esearch -db nucleotide -query "{i}" | efetch -format fasta >> {p_raw_data}/wgs.fasta')
 
 
-handle = Entrez.efetch(db="assembly", id=acc_list)
 
 
