@@ -56,7 +56,23 @@ formatting = '10 qacc pident qstart qend evalue'
 # Call the BLASTn query
 os.system(f'blastn -query {input_file} -db {p_blast}/16S -out {output_file} -outfmt "{formatting}"')
 
+records = list(SeqIO.parse(f'{p_raw_data}/wgs.fasta', format = "fasta"))
 
+trim_file = open(f"{p_filt_data}/trim.fasta", "w")
+
+df = pd.read_csv(f'{p_blast}/myresults.csv', names = ["qacc", "pident", "qstart", "qend", "evalue"])
+for k in range(1, len(df.qacc)): #for each entry in the results.csv
+	qacc = df.qacc[k]
+	qstart = df.qstart[k]
+	qend = df.qend[k]
+	for record in records:
+		if qacc in record.id:
+			trim_file.write(">" + str(record.description) + "\n")
+			trim_file.write(str(record.seq[qstart:qend]) + "\n")
+
+
+
+"""
 # PART 2 ----
 # Trim wgs reads to just the regions determined via 16S BLAST
 # Read in the BLASTn output as a pandas table
@@ -107,7 +123,5 @@ pos16S.apply(store_16S, axis=1)
 # format and write to output
 with open(f"{p_filt_data}/trim.fasta", "w") as output_handle:
     SeqIO.write(trim_dict.values(), output_handle, "fasta")
-
-
-
-
+###
+"""
