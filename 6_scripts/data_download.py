@@ -20,10 +20,9 @@ p_out = folder_names[3]
 p_blast = folder_names[4]
 p_scripts = folder_names[5]
 
+#Assuming you're running this from the scripts folder
 cwd = os.getcwd()
-
 os.chdir("..")
-print(os.getcwd())
 
 # Download the .tsv into ______ folder
 organism = 'Escherichia coli'
@@ -54,7 +53,3 @@ acc_list = list(acc['Accession'].values)
 
 for i in acc_list[0:5]:
     os.system(f'esearch -db nucleotide -query "{i}" | efetch -format fasta >> {p_raw_data}/wgs.fasta')
-
-
-
-
