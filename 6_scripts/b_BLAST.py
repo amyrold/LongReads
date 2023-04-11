@@ -75,7 +75,7 @@ os.system(f'blastn -query {input_file} -db {p_blast}/16S -out {output_file} -out
 
 
 # PART 2 ----
-# Trim wgs reads to just the regions determined via 16S BLAST
+# Append a unique identifier to the end of each accession to differentiate between copies of a genome
 # Read in the BLASTn output as a pandas table
 pos16S = pd.read_csv(f'{output_file}', names=['accession','pident','start','end', 'length','ev']) 
 # read in the multi-fasta from data_download script
@@ -109,6 +109,8 @@ def rename_acc(row):
 # Call the split function on our myresults.csv dataframe (pos16S)
 split_acc(pos16S)
 
+# PART 3 ---
+# Using the newly named data, store our 16S copies into a new multifasta
 # Read in the resulting dataframe with proper formatting
 trim_16S = pd.read_csv(f'{p_filt_data}/trim.csv', dtype={'start':'Int32','end':'Int32'}) 
 trim_16S_f = trim_16S.mask(trim_16S['length'] < 1400).dropna()
@@ -128,7 +130,7 @@ def store_16S(row):
 # apply the store_16S function across all rows in out BLAST output pd table
 trim_16S_f.apply(store_16S, axis=1)
 
-# PART 3 ----
+# PART 4 ----
 # format and write to output
 with open(f"{p_filt_data}/trim.fasta", "w") as output_handle:
     SeqIO.write(trim_dict.values(), output_handle, "fasta")
