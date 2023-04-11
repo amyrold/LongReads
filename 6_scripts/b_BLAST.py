@@ -132,5 +132,3 @@ trim_16S.apply(store_16S, axis=1)
 # format and write to output
 with open(f"{p_filt_data}/trim2.fasta", "w") as output_handle:
     SeqIO.write(trim_dict.values(), output_handle, "fasta")
-
-
