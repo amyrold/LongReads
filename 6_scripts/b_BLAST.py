@@ -52,7 +52,7 @@ os.system(f'makeblastdb -in {p_blast}/16s.fasta -out {p_blast}/16S -title 16S -d
 input_file = f'{p_raw_data}/wgs.fasta'
 output_file = f'{p_blast}/myresults.csv'
 # using the formatting requested
-formatting = '10 qacc pident qstart qend evalue'
+formatting = '10 qacc pident qstart qend length evalue'
 # Call the BLASTn query
 os.system(f'blastn -query {input_file} -db {p_blast}/16S -out {output_file} -outfmt "{formatting}"')
 
@@ -60,7 +60,7 @@ records = list(SeqIO.parse(f'{p_raw_data}/wgs.fasta', format = "fasta"))
 
 trim_file = open(f"{p_filt_data}/trim.fasta", "w")
 
-df = pd.read_csv(f'{p_blast}/myresults.csv', names = ["qacc", "pident", "qstart", "qend", "evalue"])
+df = pd.read_csv(f'{p_blast}/myresults.csv', names = ["qacc", "pident", "qstart", "qend", "length", "evalue"])
 for k in range(1, len(df.qacc)): #for each entry in the results.csv
 	qacc = df.qacc[k]
 	qstart = df.qstart[k]
