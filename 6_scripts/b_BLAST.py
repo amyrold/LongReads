@@ -117,8 +117,10 @@ trim_16S_f = trim_16S.mask(trim_16S['length'] < 1400).dropna()
 
 # Function to use the BLASTn output to trim and store in new dict 
 def trim_fa(accession, start, stop):
+    record = wgs_dict[accession[:13]][start:stop]
+    record.id = accession
     # slice the unique accession to the wgs accession and store the correct seq to trim dict
-    trim_dict[accession] = wgs_dict[accession[:13]][start:stop]
+    trim_dict[accession] = record
     return
 
 # create function to send variables to trim_fa()
