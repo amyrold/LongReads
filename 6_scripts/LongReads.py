@@ -5,27 +5,21 @@ Created on Wed Mar 22 18:55:52 2023
 
 @author: aaronmyrold
 """
-
+#%%
+# PART 0 - Import packages
 import os
-import subprocess
-from Bio import Entrez
-from Bio import SeqIO
-# from Bio.Blast import NCBIWWW
 
 # determine the path of the directory this file is located in
 # idea taken from here: https://www.pythonanywhere.com/forums/topic/13464/
 my_env = os.path.join(os.path.dirname(__file__)) #comment out unless running as script
 # my_env = '/Users/aaronmyrold/GitHub/LongReads/6_scripts' #aaron
-# my_env = '' #niru
-# my_env = '' #japani
-# my_env = '' #asad
+# my_env = '../LongReads/6_scripts' #niru
+# my_env = '../LongReads/6_scripts' #japani
+# my_env = '../LongReads/6_scripts' #asad
 # set the current working directory to that folder so that remaining paths can function properly
 os.chdir(my_env+ '/..')
 
-
-
-# PART 0 ----
-# Make directories and paths
+# Create paths to each directory
 folder_names = ('1_raw_data', '2_filtered_data', '3_test_data', '4_output', '5_blast', '6_scripts')
 p_raw_data = folder_names[0]
 p_filt_data = folder_names[1]
@@ -34,9 +28,76 @@ p_out = folder_names[3]
 p_blast = folder_names[4]
 p_scripts = folder_names[5]
 
-# this is primarily due to github not saving empty directories
-# need to be able to create folder structure from scratch if needed  
+# Create any missing directories
 for i in folder_names:
     if not os.path.exists(i):
         os.makedirs(i)
 
+#%%
+# PART 1 - Global Variable / key arguments (if necessary)
+
+# This section would be used to define any global variables
+# Or to store any information that we pass in via program arguments
+# For now, I do not think we need to worry about this. Let's get the wrapper script working first
+
+# We will end up using this if we decide to make the pipeline function with any bacterial species
+
+# In terms of arguments, it would be nice to figure out a way to have a "testing" mode
+# general tutorial: https://linuxhint.com/add_command_line_arguments_to_a_python_script/
+# Ideally, there would be a '-t' flag that would cause the pipeline to run using only a small subset of data
+# We would need to create a global variable and pass that as an argument to data_download 
+# so that we only download 10, 100, or 1000 reads
+# i.e. the user could pass '-t' (default = 10 reads), '-t 100', '-t 1000'
+# if the '-t' flag were not passed, then our default would be to download all reads
+# basically, the argument from our wrapper could define a variable that would then be passed to the data download script as it's argument
+
+
+
+#%%
+# PART X - Data Download
+
+# Really all we need to do is call the data download script and build in some confirmation that it completed successfully
+# so, first, figure out how to call the script
+# then have some kind of print statement at the end of data download that confirms it was successful
+# i.e. print('data download successful')
+
+
+#%%
+#PART X - BLAST
+
+# Really all we need to do is call the BLAST script and build in some confirmation that it completed successfully
+# so, first, figure out how to call the script
+# then have some kind of print statement at the end of BLAST that confirms it was successful
+# i.e. print('BLAST successful')
+
+
+#%%
+# PART X - Edit Distance
+
+# Really all we need to do is call the edit distance script and build in some confirmation that it completed successfully
+# so, first, figure out how to call the script
+# then have some kind of print statement at the end of edit distance that confirms it was successful
+# i.e. print('edit distance successful')
+
+
+
+#%%
+# PART X - Statistics
+
+# Really all we need to do is call the data stats script and build in some confirmation that it completed successfully
+# so, first, figure out how to call the script
+# then have some kind of print statement at the end of stats script that confirms it was successful
+# i.e. print('completed successfully')
+
+
+#%%
+# PART 6 - Clustering
+
+# Really all we need to do is call the data clustering script and build in some confirmation that it completed successfully
+# so, first, figure out how to call the script
+# then have some kind of print statement at the end of clustering script that confirms it was successful
+# i.e. print('completed successfully')
+
+
+# END ----
+#%%
