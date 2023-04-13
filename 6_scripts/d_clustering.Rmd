@@ -1,0 +1,111 @@
+---
+title: "Clustering"
+author: "Niru Shanbhag"
+date: "4/12/2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+#loading needed libraries
+library(cluster)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(stats)
+library(tidyverse)
+library(readr)
+```
+
+```{r}
+dist_om = read.csv("/Users/nirushanbhag/Downloads/LongReads/matrix.csv")
+dist_om = data.matrix(dist_om)
+```
+
+#The complete and ward clustering seems to have the highest agglomerative coefficient, but this was just with two accessions. Need to experiment with more accessions.  
+
+#I've include all the plots of different clustering methods, but the script will select the method with the highest agglomerative coefficient
+
+```{r}
+clusterward1 <- agnes(dist_om, diss = TRUE, method = "ward")
+plot(clusterward1, which.plot = 2)
+agg = capture.output(clusterward1)[2]
+
+c1agg = parse_number(agg)
+```
+```{r}
+clusterward2 <- agnes(dist_om, diss = TRUE, method = "average")
+plot(clusterward2, which.plot = 2)
+
+agg = capture.output(clusterward2)[2]
+
+c2agg = parse_number(agg)
+```
+
+```{r}
+clusterward3 <- agnes(dist_om, diss = TRUE, method = "single")
+plot(clusterward3, which.plot = 2)
+
+agg = capture.output(clusterward3)[2]
+
+c3agg = parse_number(agg)
+```
+
+```{r}
+clusterward4 <- agnes(dist_om, diss = TRUE, method = "complete")
+plot(clusterward4, which.plot = 2)
+
+agg = capture.output(clusterward4)[2]
+
+c4agg = parse_number(agg)
+```
+
+```{r}
+clusterward5 <- agnes(dist_om, diss = TRUE, method = "weighted")
+plot(clusterward5, which.plot = 2)
+
+agg = capture.output(clusterward5)[2]
+
+c5agg = parse_number(agg)
+```
+```{r}
+clusterward6 <- agnes(dist_om, diss = TRUE, method = "gaverage")
+plot(clusterward6, which.plot = 2)
+
+agg = capture.output(clusterward6)[2]
+
+c6agg = parse_number(agg)
+
+c6agg
+```
+
+#Select clustering method with highest agglomerative coefficinet
+```{r}
+agg_list = c("ward" = c1agg, "average" = c2agg, "single" = c3agg, "complete" = c4agg, "weighted"= c5agg, "gaverage"= c6agg)
+
+cluster_name_max_agg = names(agg_list[agg_list == max(agg_list)])
+
+plot(agnes(dist_om, diss = TRUE, method = cluster_name_max_agg), which.plot = 2)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
