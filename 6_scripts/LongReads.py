@@ -9,15 +9,15 @@ Created on Wed Mar 22 18:55:52 2023
 # PART 0 - Import packages
 import os
 
-# determine the path of the directory this file is located in
-# idea taken from here: https://www.pythonanywhere.com/forums/topic/13464/
-my_env = os.path.join(os.path.dirname(__file__)) #comment out unless running as script
-# my_env = '/Users/aaronmyrold/GitHub/LongReads/6_scripts' #aaron
-# my_env = '../LongReads/6_scripts' #niru
-# my_env = '../LongReads/6_scripts' #japani
-# my_env = '../LongReads/6_scripts' #asad
-# set the current working directory to that folder so that remaining paths can function properly
-os.chdir(my_env+ '/..')
+# Dynamically set cwd to ../LongReads
+if os.getcwd()[-10:] == '/LongReads':
+    my_env = os.getcwd()
+elif os.getcwd()[-10:] == '/6_scripts':
+    os.chdir('..')
+    my_env = os.getcwd()
+else:
+    my_env = os.path.join(os.path.dirname(__file__))
+
 
 # Create paths to each directory
 folder_names = ('1_raw_data', '2_filtered_data', '3_test_data', '4_output', '5_blast', '6_scripts')

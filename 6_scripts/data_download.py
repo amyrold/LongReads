@@ -11,6 +11,15 @@ Created on Mon Mar 27 18:23:37 2023
 import os
 import pandas as pd
 
+# Dynamically set cwd to ../LongReads
+if os.getcwd()[-10:] == '/LongReads':
+    my_env = os.getcwd()
+elif os.getcwd()[-10:] == '/6_scripts':
+    os.chdir('..')
+    my_env = os.getcwd()
+else:
+    my_env = os.path.join(os.path.dirname(__file__))
+
 # Make directories and paths
 folder_names = ('1_raw_data', '2_filtered_data', '3_test_data', '4_output', '5_blast', '6_scripts')
 p_raw_data = folder_names[0]
@@ -20,9 +29,10 @@ p_out = folder_names[3]
 p_blast = folder_names[4]
 p_scripts = folder_names[5]
 
-#Assuming you're running this from the scripts folder
-cwd = os.getcwd()
-os.chdir("..")
+# Create any missing directories
+for i in folder_names:
+    if not os.path.exists(i):
+        os.makedirs(i)
 
 #%%
 # PART 1 ----
