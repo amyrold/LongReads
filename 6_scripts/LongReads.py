@@ -54,7 +54,7 @@ for i in folder_names:
 
 
 #%%
-# PART X - Data Download
+# PART 2 - Data Download
 
 # Really all we need to do is call the data download script and build in some confirmation that it completed successfully
 # so, first, figure out how to call the script
@@ -63,7 +63,7 @@ for i in folder_names:
 
 
 #%%
-#PART X - BLAST
+#PART 3 - BLAST
 
 # Really all we need to do is call the BLAST script and build in some confirmation that it completed successfully
 # so, first, figure out how to call the script
@@ -72,7 +72,7 @@ for i in folder_names:
 
 
 #%%
-# PART X - Edit Distance
+# PART 4 - Edit Distance
 
 # Really all we need to do is call the edit distance script and build in some confirmation that it completed successfully
 # so, first, figure out how to call the script
@@ -82,7 +82,7 @@ for i in folder_names:
 
 
 #%%
-# PART X - Statistics
+# PART 5 - Statistics
 
 # Really all we need to do is call the data stats script and build in some confirmation that it completed successfully
 # so, first, figure out how to call the script
