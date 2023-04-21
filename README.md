@@ -26,10 +26,12 @@ To build the docker image, first clone the repository using
 git clone https://github.com/amyrold/LongReads
 ```
 
-Next, build the image using
+Next, build the image using:
 ```
 sudo docker build LongReads --tag longreads:latest
 ```
+Here, we need to make sure that "LongReads" matches the name of the cloned repo. If you cloned with a different folder name than "LongReads" simply update the docker build command to reflect that. 
+
 
 Finally, create a Docker container with the prophagedetective image using
 ```
