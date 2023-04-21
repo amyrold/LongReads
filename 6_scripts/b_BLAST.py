@@ -72,7 +72,10 @@ def rename_acc(row):
 # FUNCTION 3
 # Function to use the BLASTn output to trim and store in new dict 
 def trim_fa(accession, start, stop):
-    record = wgs_dict[accession[:13]][start:stop]
+    #keep accession no, not the _#, because in the wgs fasta file, there aren't any copy numbers
+    period_loc = accession.find('.')
+    record = wgs_dict[accession[0:(period_loc+2)]][start:stop]
+    #setting the record.id = to the full accession, which has the copy number appended to it
     record.id = accession
     # slice the unique accession to the wgs accession and store the correct seq to trim dict
     trim_dict[accession] = record
