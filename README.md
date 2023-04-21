@@ -6,12 +6,7 @@ Simple overview of use/purpose.
 
 An in-depth paragraph about your project and overview of use.
 
-## Getting Started
-
-### Dependencies
-The primary requirement for running this pipeline is docker. 
-
-### Installing
+### Installation Methods
 
 ## Docker
 Docker is a free and open platform for developing, deploying, and running software. Docker isolates your applications from your infrastructure, allowing you to deliver software quickly. On this platform, you can manage your infrastructure the same way you manage your applications. Docker lets you package and run an application within a container, which is a loosely isolated environment.
@@ -44,8 +39,55 @@ sudo docker run -it --name [container name] longreads
 ```
 where 'container name' is any user-given name.
 
+## Conda environemnt
+If docker is undesirable, a conda env.yml file is provided.
+First, create the conda environment
+```
+conda create env -f LongReads.yml
+```
+Then, activate the environment before continuing on to execution
+```
+conda activate LongReads
+```
 
-### Executing program
+## Manual Installation
+To run this program manually, you will need to download the following packages before continuing to executing the program
+Here are the required dependancies to run main.py
+#### entrez-direct
+```
+conda install -c bioconda entrez-direct
+```
+#### ncbi-datasets-cli
+```
+conda install -c conda-forge ncbi-datasets-cli
+```
+#### blast
+```
+conda install -c bioconda blast
+```
+#### pandas
+```
+conda install -c anaconda pandas
+```
+#### numpy
+```
+conda install -c anaconda numpy
+```
+#### biopython
+```
+conda install -c conda-forge biopython
+```
+#### editdistance
+```
+conda install -c conda-forge editdistance
+```
+#### matplotlib
+```
+conda install -c conda-forge matplotlib
+```
+
+
+## Executing program
 Once the container is up and running, the user can call the following command from within /LongReads to begin the pipeline
 ```
 python3 main.py
