@@ -18,6 +18,9 @@ Docker is a free and open platform for developing, deploying, and running softwa
 
 This Docker image contains all required dependencies for this pipeline, as well as the pipeline script (main.py). 
 
+Before building the image, you must first download docker from https://www.docker.com for your appropriate opperating system. 
+Once docker is installed, you can continue to the next step -- cloning our repo
+
 To build the docker image, first clone the repository using
 ```
 git clone https://github.com/amyrold/LongReads
