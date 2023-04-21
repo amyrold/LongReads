@@ -20,7 +20,10 @@ To build the docker image, first clone the repository using
 ```
 git clone https://github.com/amyrold/LongReads
 ```
-
+Then, before building the container pull the base image
+```
+docker pull tikhonovapolly/phigaro
+```
 Next, build the image using:
 ```
 sudo docker build LongReads --tag longreads:latest
