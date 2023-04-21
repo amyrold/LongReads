@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Mar 27 18:23:37 2023
+Created on Thu Apr 20 18:07:04 2023
 
-@author: aaron
+@author: aaronmyrold
 """
+
 #%%
-# PART 0 ----
+# PART 0 - Import packages
 import os
 import pandas as pd
 from Bio import SeqIO
+import itertools
+import numpy as np
+import editdistance
 
 # Dynamically set cwd to ../LongReads
-if os.getcwd()[-10:] == '/LongReads':
+if os.getcwd()[-10:] == '/LongReads_test':
     my_env = os.getcwd()
 elif os.getcwd()[-10:] == '/6_scripts':
     os.chdir('..')
@@ -20,7 +24,8 @@ elif os.getcwd()[-10:] == '/6_scripts':
 else:
     my_env = os.path.join(os.path.dirname(__file__))
 
-# Make directories and paths
+
+# Create paths to each directory
 folder_names = ('1_raw_data', '2_filtered_data', '3_test_data', '4_output', '5_blast', '6_scripts')
 p_raw_data = folder_names[0]
 p_filt_data = folder_names[1]
@@ -36,6 +41,49 @@ for i in folder_names:
         
 #%%
 # PART 1 ----
+# Download metadata
+# Download the .tsv into ______ folder
+organism = 'Escherichia coli'
+fields = '--fields accession,assminfo-sequencing-tech'
+query = f"datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | dataformat tsv genome {fields}" + f" > {p_raw_data}/ecoli.tsv"
+os.system(query)
+
+#%%
+# PART 2 ----
+# read in the metadata and filter by sequencing technology
+# We only want genomes that have been sequenced using long read sequencing
+
+#replace the path with where the tsv file is
+tsv = pd.read_csv(f'{p_raw_data}/ecoli.tsv', delimiter= "\t") 
+
+# drop rows that are not long read (pacbio, nanopore, ???)
+f = open(f'{p_raw_data}/longreads.tsv', 'w')
+
+for row_num in tsv.index:
+    acc = str(tsv['Assembly Accession'][row_num])
+    seq_tech = str(tsv['Assembly Sequencing Tech'][row_num])
+    
+    remove = [';', 'and', ',', '+', 'Illumina']
+    
+    if ('Nanopore' in seq_tech or 'PacBio' in seq_tech) and not any(x in seq_tech for x in remove):
+        f.write(acc + "\t" + seq_tech + '\n')
+        
+f.close()
+#%%
+# PART 3 ---
+# Read in the filtered metadata and download genomic fasta files into one multi-fasta
+# Store the accession column as a list
+acc = pd.read_csv(f'{p_raw_data}/longreads.tsv', sep = "\t", names = ['Accession', "Sequencing Technology"])
+acc_list = list(acc['Accession'].values)
+# Iterate through the accession list and store the genomes in a multi fasta file
+for i in acc_list[0:5]:
+    os.system(f'esearch -db nucleotide -query "{i}" | efetch -format fasta >> {p_raw_data}/wgs.fasta')
+ 
+print('Data Download is complete')
+# END DATA DOWNLOAD----
+
+#%%
+# PART 1 ----
 # Define required functions
 
 # Functions 1&2 are used to assign unique names/identifiers to each 16S copy within a single genome.
@@ -48,9 +96,21 @@ for i in folder_names:
 def split_acc(seq_df):
     # Find unique accessions
     unique = pd.DataFrame(seq_df['accession'].unique())
+    
+    #remove overlap
+    # unique.apply(drop_ol, axis=1)
+    
     # apply rename function to each accession
     unique.apply(rename_acc, axis=1)
     return
+
+# filter myresults.csv by accession
+# order by qstart
+# if qstart < previous qend,
+# def drop_ol(row):
+#     subset = pos16S.where(pos16S['accession'] == row[0]).dropna().reset_index(drop='True')
+    
+#     return
 
 # FUNCTION 2
 # Define function to add _# to each 16S copy within the genome
@@ -72,10 +132,8 @@ def rename_acc(row):
 # FUNCTION 3
 # Function to use the BLASTn output to trim and store in new dict 
 def trim_fa(accession, start, stop):
-    #keep accession no, not the _#, because in the wgs fasta file, there aren't any copy numbers
     period_loc = accession.find('.')
-    record = wgs_dict[accession[0:(period_loc+2)]][start:stop]
-    #setting the record.id = to the full accession, which has the copy number appended to it
+    record = wgs_dict[accession[:(period_loc+2)]][start:stop]
     record.id = accession
     # slice the unique accession to the wgs accession and store the correct seq to trim dict
     trim_dict[accession] = record
@@ -139,5 +197,103 @@ trim_16S_f.apply(store_16S, axis=1)
 with open(f"{p_filt_data}/trim.fasta", "w") as output_handle:
     SeqIO.write(trim_dict.values(), output_handle, "fasta")
 
+print('BLAST is complete')
+# END ----
+
+#%%
+# PART 1 ----
+# Define Functions
+
+# FUNCTION 1
+#pass in the comb_list to a function, which will populate the edit distance matrix
+def ed(seq_pair):
+    seq1 = seq_pair[0]
+    seq2 = seq_pair[1]
+    
+    ed_df[seq1][seq2] = editdistance.eval(seq1,seq2)
+    
+# FUNCTION 2    
+#populates the within_coords and between_coords lists, depending on if the pairs are within the same genome or different genomes
+def within_between(seq_pair):
+    seq1 = seq_pair[0]
+    seq2 = seq_pair[1]
+    
+    if seq1[0:13] == seq2[0:13]:
+        within_coords.append(seq_pair) #appending the within
+    else:
+        between_coords.append(seq_pair) #appending the between
+
+# FUNCTION 3        
+#get edit distance as iterating through the within coordinates
+def get_ed_within(seq_pair):
+    seq1 = seq_pair[0]
+    seq2 = seq_pair[1]
+    
+    ed = ed_df[seq1][seq2] 
+    
+    if seq_pair in within_coords:
+        within_ed.append(ed)
+ 
+# FUNCTION 4
+#get edit distance as iterating through the between coordinates
+def get_ed_between(seq_pair):
+    seq1 = seq_pair[0]
+    seq2 = seq_pair[1]
+    
+    ed = ed_df[seq1][seq2] 
+    
+    if seq_pair in between_coords:
+        between_ed.append(ed)
+
+
+#%%
+# PART 2 ----
+records = SeqIO.to_dict(SeqIO.parse(f"{p_filt_data}/trim.fasta", format = "fasta"))
+
+headers = [] 
+for key,value in records.items(): #append id to headers list
+    headers.append(key)
+
+#initializing matrix
+ed_df = pd.DataFrame(np.zeros((len(headers),len(headers))),
+              columns=headers,
+              index=headers)
+
+#comb list will be populated with all the different pairings of accession nums
+comb_list = []
+for k in itertools.combinations(headers,2):
+    comb_list.append(k)
+    
+#%%
+# PART 3 ---    
+#passing the ed function to the list of combinations list
+matrix_result = list(map(ed, comb_list))
+
+#initializing a list of within and between coordinates
+within_coords = []
+between_coords = []
+
+#passing the within_between function to the combinations list
+within_between_result = list(map(within_between, comb_list))
+
+#initializing a list of within and between edit distances. We will later do some stats on these
+within_ed = []
+between_ed = []
+
+#passing the get_ed_within function to the list of within coordinates
+get_ed_within_result = list(map(get_ed_within,within_coords)) 
+
+#passing the get_ed_between function to the list of between coordinates
+get_ed_between_result = list(map(get_ed_between,between_coords))    
+
+#%%
+# PART 4 ----
+#sending the matrix, between_ed list, and within_ed list to csvs. 
+#these csvs will be used in R for hierarchical clustering
+ed_df.to_csv(f"{p_out}/matrix.csv")
+pd.Series(within_ed).to_csv(f"{p_out}/within.csv", header = None)
+pd.Series(between_ed).to_csv(f"{p_out}/between.csv", header = None)
+
+print('Edit Distance has been calculated')
 # END ----
 #%%

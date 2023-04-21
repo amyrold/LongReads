@@ -1,12 +1,12 @@
-FROM continuumio/miniconda3
-RUN mkdir /root/LongReads
-RUN bin/bash -c "/root/miniconda3/bin/conda install -c conda-forge biopython"
+FROM tikhonovapolly/phigaro:latest
+RUN bin/bash -c "/root/miniconda3/bin/conda install -c bioconda entrez-direct"
+RUN bin/bash -c "/root/miniconda3/bin/conda install -c conda-forge ncbi-datasets-cli --yes"
+RUN bin/bash -c "/root/miniconda3/bin/conda install -c bioconda blast --yes"
 RUN bin/bash -c "/root/miniconda3/bin/conda install -c anaconda pandas"
 RUN bin/bash -c "/root/miniconda3/bin/conda install -c anaconda numpy"
-RUN bin/bash -c "/root/miniconda3/bin/conda install -c bioconda blast"
-RUN bin/bash -c "/root/miniconda3/bin/conda install -c conda-forge ncbi-datasets-cli"
+RUN bin/bash -c "/root/miniconda3/bin/conda install -c conda-forge biopython --yes"
 RUN bin/bash -c "/root/miniconda3/bin/conda install -c conda-forge editdistance"
 RUN bin/bash -c "/root/miniconda3/bin/conda install -c conda-forge matplotlib"
-RUN bin/bash -c "/root/miniconda3/bin/conda install -c bioconda entrez-direct
+RUN apt-get update && apt-get install -y unzip vim
 WORKDIR /LongReads
-ADD main.py
+COPY main.py /LongReads/
