@@ -52,39 +52,17 @@ conda activate LongReads
 
 ## Manual Installation
 To run this program manually, you will need to download the following packages before continuing to executing the program
-Here are the required dependancies to run main.py
-#### entrez-direct
-```
-conda install -c bioconda entrez-direct
-```
-#### ncbi-datasets-cli
-```
-conda install -c conda-forge ncbi-datasets-cli
-```
-#### blast
-```
-conda install -c bioconda blast
-```
-#### pandas
-```
-conda install -c anaconda pandas
-```
-#### numpy
-```
-conda install -c anaconda numpy
-```
-#### biopython
-```
-conda install -c conda-forge biopython
-```
-#### editdistance
-```
-conda install -c conda-forge editdistance
-```
-#### matplotlib
-```
-conda install -c conda-forge matplotlib
-```
+Here are the required dependancies to run main.py. They can all be installed via conda and some via pip.
+### Dependancies
+entrez-direct
+ncbi-datasets-cli
+blast
+pandas
+numpy
+biopython
+editdistance
+matplotlib
+
 
 
 ## Executing program
