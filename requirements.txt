@@ -1,0 +1,6 @@
+ncbi-datasets-pylib
+numpy
+pandas
+biopython
+editdistance
+matplotlib

@@ -15,24 +15,15 @@ import itertools
 import numpy as np
 import editdistance
 
-# Dynamically set cwd to ../LongReads
-if os.getcwd()[-10:] == '/LongReads_test':
-    my_env = os.getcwd()
-elif os.getcwd()[-10:] == '/6_scripts':
-    os.chdir('..')
-    my_env = os.getcwd()
-else:
-    my_env = os.path.join(os.path.dirname(__file__))
-
+# Set working directory
+# my_env = './LongReads/'
 
 # Create paths to each directory
-folder_names = ('1_raw_data', '2_filtered_data', '3_test_data', '4_output', '5_blast', '6_scripts')
+folder_names = ('1_raw_data', '2_filtered_data', '3_output', '4_blast')
 p_raw_data = folder_names[0]
 p_filt_data = folder_names[1]
-p_test_data = folder_names[2]
-p_out = folder_names[3]
-p_blast = folder_names[4]
-p_scripts = folder_names[5]
+p_out = folder_names[2]
+p_blast = folder_names[3]
 
 # Create any missing directories
 for i in folder_names:
@@ -45,7 +36,7 @@ for i in folder_names:
 # Download the .tsv into ______ folder
 organism = 'Escherichia coli'
 fields = '--fields accession,assminfo-sequencing-tech'
-query = f"datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | dataformat tsv genome {fields}" + f" > {p_raw_data}/ecoli.tsv"
+query = f"./../datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | ./../dataformat tsv genome {fields}" + f" > {p_raw_data}/ecoli.tsv"
 os.system(query)
 
 #%%
