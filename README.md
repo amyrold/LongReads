@@ -31,7 +31,7 @@ sudo docker build LongReads --tag longreads:latest
 Here, we need to make sure that "LongReads" matches the name of the cloned repo. If you cloned with a different folder name than "LongReads" simply update the docker build command to reflect that. 
 
 
-Finally, create a Docker container with the prophagedetective image using
+Finally, create a Docker container with the longreads image using
 ```
 sudo docker create -it --name [container name] longreads
 sudo docker start -i [container name]
