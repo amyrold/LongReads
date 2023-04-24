@@ -39,7 +39,7 @@ sudo docker run -it --name [container name] longreads
 ```
 where 'container name' is any user-given name.
 
-## Pip requirements
+## Pip Install
 If docker is undesirable, a pip requirements file is provided.
 Here are the linux packages that are installed in the docker image. build-essential, ca-certs, and py-dev are all needed for biopython. They are likely installed already, but you can try installing them in case. The last two are required for the pipeline to run
 ```
@@ -61,7 +61,6 @@ chmod +x datasets dataformat
 ```
 
 
-
 ## Manual Installation
 To run this program manually, you will need to download the following packages before continuing to executing the program
 Here are the required dependancies to run main.py. They can all be installed via conda, pip, or apt-get.
@@ -78,7 +77,7 @@ Here are the required dependancies to run main.py. They can all be installed via
 
 
 ## Executing program
-Once the container is up and running, the user can call the following command from within /LongReads to begin the pipeline
+Once the container is up and running (or appropriate packages have been installed locally), the user can call the following command from within /LongReads to begin the pipeline
 ```
 python3 main.py
 ```
