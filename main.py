@@ -198,11 +198,14 @@ print('BLAST is complete')
 # FUNCTION 1
 #pass in the comb_list to a function, which will populate the edit distance matrix
 def ed(seq_pair):
-    seq1 = seq_pair[0]
-    seq2 = seq_pair[1]
+    seq1_header = seq_pair[0]
+    seq2_header = seq_pair[1]
     
-    ed_df[seq1][seq2] = editdistance.eval(seq1,seq2)
+    seq1 = records[seq1_header].seq
+    seq2 = records[seq2_header].seq
     
+    ed_df[seq1_header][seq2_header] = editdistance.eval(seq1,seq2)
+
 # FUNCTION 2    
 #populates the within_coords and between_coords lists, depending on if the pairs are within the same genome or different genomes
 def within_between(seq_pair):
