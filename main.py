@@ -14,9 +14,20 @@ from Bio import SeqIO
 import itertools
 import numpy as np
 import editdistance
+import argparse
 
 # Set working directory
 # my_env = './LongReads/'
+
+parser = argparse.ArgumentParser(description='Quantify variation of the 16S region within and between bacterial strains of a specified species.')
+parser.add_argument('--species','-s', type=str, help='The full species name of bacteria to be analyzed (i.e. Escherichia Coli)')
+parser.add_argument('--num','-n', type=int, default=None, help='Determine the number of distinct genomes that should be downloaded. Leave blank to run analysis on all complete genomes associated with the specified species.')
+
+args = parser.parse_args()
+
+
+
+#%%
 
 # Create paths to each directory
 folder_names = ('1_raw_data', '2_filtered_data', '3_output', '4_blast')
@@ -35,9 +46,9 @@ for i in folder_names:
 # Download metadata
 print('Downloading metadata...')
 # Download the .tsv into ______ folder
-organism = 'Escherichia coli'
+organism = args.species
 fields = '--fields accession,assminfo-sequencing-tech'
-query = f"./datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | ./dataformat tsv genome {fields}" + f" > {p_raw_data}/ecoli.tsv"
+query = f"./datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | ./dataformat tsv genome {fields}" + f" > {p_raw_data}/metadata.tsv"
 os.system(query)
 
 #%%
@@ -46,9 +57,9 @@ os.system(query)
 # We only want genomes that have been sequenced using long read sequencing
 
 #replace the path with where the tsv file is
-tsv = pd.read_csv(f'{p_raw_data}/ecoli.tsv', delimiter= "\t") 
+tsv = pd.read_csv(f'{p_raw_data}/metadata.tsv', delimiter= "\t") 
 init_count = len(tsv)
-print(f'There are {init_count} e. coli accessions')
+print(f'There are {init_count} {organism} accessions')
 # drop rows that are not long read (pacbio, nanopore, ???)
 f = open(f'{p_raw_data}/longreads.tsv', 'w')
 
@@ -69,11 +80,16 @@ f.close()
 acc = pd.read_csv(f'{p_raw_data}/longreads.tsv', sep = "\t", names = ['Accession', "Sequencing Technology"])
 acc_list = list(acc['Accession'].values)
 fin_count = len(acc_list)
-print(f'There are {fin_count} e. coli long-read accessions')
-# Iterate through the accession list and store the genomes in a multi fasta file
-for i in acc_list[0:5]:
-    os.system(f'esearch -db nucleotide -query "{i}" | efetch -format fasta >> {p_raw_data}/wgs.fasta')
- 
+print(f'There are {fin_count} {organism} long-read accessions')
+num = args.num
+if (num == None):
+    # Iterate through the accession list and store the genomes in a multi fasta file
+    for i in acc_list[0:5]:
+        os.system(f'esearch -db nucleotide -query "{i}" | efetch -format fasta >> {p_raw_data}/wgs.fasta')
+else:
+    # use the specified download number
+    for i in acc_list[0:num]:
+        os.system(f'esearch -db nucleotide -query "{i}" | efetch -format fasta >> {p_raw_data}/wgs.fasta')
 print('Data Download is complete')
 # END DATA DOWNLOAD----
 
