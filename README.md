@@ -1,10 +1,11 @@
 # LongReads
-
-Simple overview of use/purpose.
-
+LongReads is a bioinformatics application that will compare the variation of the 16S region within and between strains of a specified bacterial species. Based on a user-specified genome, LongReads will download metadata and filter to genomes that were sequenced using Long Read technology. It then determines and analyzes the intra-genomic and inter-genomic variation of the different 16S regions seen in each genome. 
 ## Description
 
 An in-depth paragraph about your project and overview of use.
+
+
+
 
 # Installation Methods
 
@@ -16,10 +17,11 @@ This Docker image contains all required dependencies for this pipeline, as well 
 Before building the image, you must first download docker from https://www.docker.com for your appropriate opperating system. You will also need to create and connect a docker hub account in order for the dockerfile to pull the appropriate starting image. 
 Once docker is installed and you are logged in, you can continue to the next step -- cloning our repo
 
-To build the docker image, first clone the repository using
+To build the docker image, first clone the repository using either
 ```
 git clone https://github.com/amyrold/LongReads
 ```
+or download the repo using the web/app GUI.
 
 Next, build the image using:
 ```
@@ -74,19 +76,10 @@ Here are the required dependancies to run main.py. They can all be installed via
 - editdistance
 - matplotlib
 
-
-
 ## Executing program
-Once the container is up and running (or appropriate packages have been installed locally), the user can call the following command from within /LongReads to begin the pipeline
+Once the container is up and running (or appropriate packages have been installed locally), the user can call the following command from within /LongReads to begin the pipeline. If unspecified, the '-n' flag will download all Long Read genomes of specified bacteria.
 ```
-python3 main.py
-```
-
-## Help
-
-Any advise for common problems or issues.
-```
-command to run if program contains helper info
+python3 main.py -s [Bacterial Species of Choice] -n [Number of Genomes to download]
 ```
 
 ## Authors
