@@ -20,10 +20,7 @@ To build the docker image, first clone the repository using
 ```
 git clone https://github.com/amyrold/LongReads
 ```
-Then, before building the container pull the base image
-```
-docker pull tikhonovapolly/phigaro
-```
+
 Next, build the image using:
 ```
 sudo docker build LongReads --tag longreads:latest
@@ -42,23 +39,35 @@ sudo docker run -it --name [container name] longreads
 ```
 where 'container name' is any user-given name.
 
-## Conda environemnt
-If docker is undesirable, a conda env.yml file is provided.
-First, create the conda environment
+## Pip requirements
+If docker is undesirable, a pip requirements file is provided.
+Here are the linux packages that are installed in the docker image. build-essential, ca-certs, and py-dev are all needed for biopython. They are likely installed already, but you can try installing them in case. The last two are required for the pipeline to run
 ```
-conda create env -f LongReads.yml
+apt-get install -y build-essential
+apt-get install -y ca-certificates
+apt-get install -y python3-dev
+apt-get install -y ncbi-blast+
+apt-get install -y ncbi-entrez-direct
 ```
-Then, activate the environment before continuing on to execution
+Then, from within the LongReads directory, run this command to download the required pip packages. 
 ```
-conda activate LongReads
+pip install -r requirements.txt
 ```
+Lastly, we need to install ncbi-datasets. For the script to run without changes, these commands must be run within the LongReads repo. 
+```
+curl -o datasets 'https://ftp.ncbi.nlm.nih.gov/pub/datasets/command-line/v2/linux-amd64/datasets'
+curl -o dataformat 'https://ftp.ncbi.nlm.nih.gov/pub/datasets/command-line/v2/linux-amd64/dataformat'
+chmod +x datasets dataformat
+```
+
+
 
 ## Manual Installation
 To run this program manually, you will need to download the following packages before continuing to executing the program
-Here are the required dependancies to run main.py. They can all be installed via conda and some via pip.
+Here are the required dependancies to run main.py. They can all be installed via conda, pip, or apt-get.
 ### Dependancies
 - entrez-direct
-- ncbi-datasets-cli
+- ncbi-datasets
 - blast
 - pandas
 - numpy
