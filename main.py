@@ -6,8 +6,29 @@ Created on Thu Apr 20 18:07:04 2023
 @author: aaronmyrold
 """
 
-#%%
-# PART 0 - Import packages
+''' SCRIPT OUTLINE  '''
+# 0 - Establish Variables and Functions
+#  ** 0.1 - Import Packages
+#  ** 0.2 - Create Directories
+#  ** 0.3 - Define BLAST Functions
+#  ** 0.4 - Define Edit Distance Functions
+# 1 - Data Download
+#  ** 1.1 - Download Metadata
+#  ** 1.2 - Filter by Sequencing Technology
+#  ** 1.3 - Download Long Read Genomes
+# 2 - BLAST
+#  ** 2.1 - Create BLAST Database
+#  ** 2.2 - Make BLASTn Query
+#  ** 2.3 - Append Unique Identifier to 16S Accessions
+#  ** 2.4 - Tie 16S Sequences to Unique Accessions
+#  ** 2.5 - Write the Multi-Fasta File
+# 3 - Edit Distance
+#  ** 3.1 - Calculating Edit Distance
+#  ** 3.2 - Use ED to Create Matrix
+#  ** 3.3 - Store Matrix and Vectors
+
+#%% 0 - Establish Variables and Functions
+#%% ** 0.1 - Import packages
 import os
 import pandas as pd
 from Bio import SeqIO
@@ -22,13 +43,9 @@ import argparse
 parser = argparse.ArgumentParser(description='Quantify variation of the 16S region within and between bacterial strains of a specified species.')
 parser.add_argument('--species','-s', type=str, help='The full species name of bacteria to be analyzed (i.e. Escherichia Coli)')
 parser.add_argument('--num','-n', type=int, default=None, help='Determine the number of distinct genomes that should be downloaded. Leave blank to run analysis on all complete genomes associated with the specified species.')
-
 args = parser.parse_args()
 
-
-
-#%%
-
+#%% ** 0.2 - Create Directories
 # Create paths to each directory
 folder_names = ('1_raw_data', '2_filtered_data', '3_output', '4_blast')
 p_raw_data = folder_names[0]
@@ -41,60 +58,7 @@ for i in folder_names:
     if not os.path.exists(i):
         os.makedirs(i)
         
-#%%
-# PART 1 ----
-# Download metadata
-print('Downloading metadata...')
-# Download the .tsv into ______ folder
-organism = args.species
-fields = '--fields accession,assminfo-sequencing-tech'
-query = f"./datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | ./dataformat tsv genome {fields}" + f" > {p_raw_data}/metadata.tsv"
-os.system(query)
-
-#%%
-# PART 2 ----
-# read in the metadata and filter by sequencing technology
-# We only want genomes that have been sequenced using long read sequencing
-
-#replace the path with where the tsv file is
-tsv = pd.read_csv(f'{p_raw_data}/metadata.tsv', delimiter= "\t") 
-init_count = len(tsv)
-print(f'There are {init_count} {organism} accessions')
-# drop rows that are not long read (pacbio, nanopore, ???)
-f = open(f'{p_raw_data}/longreads.tsv', 'w')
-
-for row_num in tsv.index:
-    acc = str(tsv['Assembly Accession'][row_num])
-    seq_tech = str(tsv['Assembly Sequencing Tech'][row_num])
-    
-    remove = [';', 'and', ',', '+', 'Illumina']
-    
-    if ('Nanopore' in seq_tech or 'PacBio' in seq_tech) and not any(x in seq_tech for x in remove):
-        f.write(acc + "\t" + seq_tech + '\n')
-
-f.close()
-#%%
-# PART 3 ---
-# Read in the filtered metadata and download genomic fasta files into one multi-fasta
-# Store the accession column as a list
-acc = pd.read_csv(f'{p_raw_data}/longreads.tsv', sep = "\t", names = ['Accession', "Sequencing Technology"])
-acc_list = list(acc['Accession'].values)
-fin_count = len(acc_list)
-print(f'There are {fin_count} {organism} long-read accessions')
-num = args.num
-if (num == None):
-    # Iterate through the accession list and store the genomes in a multi fasta file
-    for i in acc_list[0:5]:
-        os.system(f'esearch -db nucleotide -query "{i}" | efetch -format fasta >> {p_raw_data}/wgs.fasta')
-else:
-    # use the specified download number
-    for i in acc_list[0:num]:
-        os.system(f'esearch -db nucleotide -query "{i}" | efetch -format fasta >> {p_raw_data}/wgs.fasta')
-print('Data Download is complete')
-# END DATA DOWNLOAD----
-
-#%%
-# PART 1 ----
+#%% ** 0.3 - Define Part 1 Functions
 # Define required functions
 
 # Functions 1&2 are used to assign unique names/identifiers to each 16S copy within a single genome.
@@ -157,67 +121,7 @@ def store_16S(row):
     trim_fa(row['accession'],row['start'], row['end'])
     return
 
-#%%
-# PART 2 ----
-# BLAST wgs sequences against 16S BLAST database
-print('Building BLAST database...')
-# Create 16S BLAST database:
-entrezQuery = "J01859" #determine query
-os.system(f'esearch -db nucleotide -query "{entrezQuery}" | efetch -format fasta > {p_blast}/16s.fasta')
-
-# Use reference sequences to create BLAST database
-os.system(f'makeblastdb -in {p_blast}/16s.fasta -out {p_blast}/16S -title 16S -dbtype nucl')
-
-# Define BLASTn query
-input_file = f'{p_raw_data}/wgs.fasta'
-output_file = f'{p_blast}/myresults.csv'
-# using the formatting requested
-formatting = '10 qacc pident qstart qend length evalue'
-# Call the BLASTn query
-print('Running the BLASTn query...')
-os.system(f'blastn -query {input_file} -db {p_blast}/16S -out {output_file} -outfmt "{formatting}"')
-print('BLAST complete')
-
-#%%
-# PART 3 ----
-# Append a unique identifier to the end of each accession to differentiate between copies of a genome
-# Read in the BLASTn output as a pandas table
-pos16S = pd.read_csv(f'{output_file}', names=['accession','pident','start','end', 'length','ev']) 
-copies_16S = len(pos16S)
-print(f'There are {copies_16S} total copies of the 16S region')
-# read in the multi-fasta from data_download script
-wgs_dict = SeqIO.to_dict(SeqIO.parse(f'{p_raw_data}/wgs.fasta', 'fasta')) 
-# define dictionary to store trimmed sequences
-trim_dict = {}
-# Create trim.csv output file
-trim_temp = pd.DataFrame(columns=['accession','pident','start','end','length', 'ev'])
-trim_temp.to_csv(f'{p_filt_data}/trim.csv', index=False)
-
-# Call the split function on our myresults.csv dataframe (pos16S)
-split_acc(pos16S)
-
-#%%
-# PART 4 ---
-# Using the newly named data, store our 16S copies into a new multifasta
-# Read in the resulting dataframe with proper formatting
-trim_16S = pd.read_csv(f'{p_filt_data}/trim.csv', dtype={'start':'Int32','end':'Int32'})
-# remove any reads that are shorter than our cutoff 
-trim_16S_f = trim_16S.mask(trim_16S['length'] < 1400).dropna()
-
-# apply the store_16S function across all rows in out BLAST output pd table
-trim_16S_f.apply(store_16S, axis=1)
-
-#%%
-# PART 5 ----
-# Using the dictionary created in part 4, write the 16S reads with their unique identifier to our output (trim.fasta)
-with open(f"{p_filt_data}/trim.fasta", "w") as output_handle:
-    SeqIO.write(trim_dict.values(), output_handle, "fasta")
-
-print('trim.fasta has been created')
-# END ----
-
-#%%
-# PART 1 ----
+#%% ** 0.4 - Define Edit Distance Functions
 # Define Functions
 
 # FUNCTION 1
@@ -265,8 +169,116 @@ def get_ed_between(seq_pair):
         between_ed.append(ed)
 
 
-#%%
-# PART 2 ----
+
+#%% 1 - Data Download
+#%% ** 1.1 - Download Metadata
+# Download metadata
+print('Downloading metadata...')
+# Download the .tsv into ______ folder
+organism = args.species
+fields = '--fields accession,assminfo-sequencing-tech'
+query = f"./datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | ./dataformat tsv genome {fields}" + f" > {p_raw_data}/metadata.tsv"
+os.system(query)
+
+#%% ** 1.2 - Filter by Sequencing Technology
+# read in the metadata and filter by sequencing technology
+# We only want genomes that have been sequenced using long read sequencing
+
+#replace the path with where the tsv file is
+tsv = pd.read_csv(f'{p_raw_data}/metadata.tsv', delimiter= "\t") 
+init_count = len(tsv)
+print(f'There are {init_count} {organism} accessions')
+# drop rows that are not long read (pacbio, nanopore, ???)
+f = open(f'{p_raw_data}/longreads.tsv', 'w')
+
+for row_num in tsv.index:
+    acc = str(tsv['Assembly Accession'][row_num])
+    seq_tech = str(tsv['Assembly Sequencing Tech'][row_num])
+    
+    remove = [';', 'and', ',', '+', 'Illumina']
+    
+    if ('Nanopore' in seq_tech or 'PacBio' in seq_tech) and not any(x in seq_tech for x in remove):
+        f.write(acc + "\t" + seq_tech + '\n')
+
+f.close()
+#%% ** 1.3 - Download Long Read Genomes
+# Read in the filtered metadata and download genomic fasta files into one multi-fasta
+# Store the accession column as a list
+acc = pd.read_csv(f'{p_raw_data}/longreads.tsv', sep = "\t", names = ['Accession', "Sequencing Technology"])
+acc_list = list(acc['Accession'].values)
+fin_count = len(acc_list)
+print(f'There are {fin_count} {organism} long-read accessions')
+num = args.num
+if (num == None):
+    # Iterate through the accession list and store the genomes in a multi fasta file
+    for i in acc_list[0:5]:
+        os.system(f'esearch -db nucleotide -query "{i}" | efetch -format fasta >> {p_raw_data}/wgs.fasta')
+else:
+    # use the specified download number
+    for i in acc_list[0:num]:
+        os.system(f'esearch -db nucleotide -query "{i}" | efetch -format fasta >> {p_raw_data}/wgs.fasta')
+print('Data Download is complete')
+# END DATA DOWNLOAD----
+
+#%% 2 - BLAST
+#%% ** 2.1 - Create BLAST database
+# BLAST wgs sequences against 16S BLAST database
+print('Building BLAST database...')
+# Create 16S BLAST database:
+entrezQuery = "J01859" #determine query
+os.system(f'esearch -db nucleotide -query "{entrezQuery}" | efetch -format fasta > {p_blast}/16s.fasta')
+
+# Use reference sequences to create BLAST database
+os.system(f'makeblastdb -in {p_blast}/16s.fasta -out {p_blast}/16S -title 16S -dbtype nucl')
+
+#%% ** 2.2 - Make BLASTn Query
+# Define BLASTn query
+input_file = f'{p_raw_data}/wgs.fasta'
+output_file = f'{p_blast}/myresults.csv'
+# using the formatting requested
+formatting = '10 qacc pident qstart qend length evalue'
+# Call the BLASTn query
+print('Running the BLASTn query...')
+os.system(f'blastn -query {input_file} -db {p_blast}/16S -out {output_file} -outfmt "{formatting}"')
+print('BLAST complete')
+
+#%% ** 2.3 - Append Unique Identifier to 16S Accessions
+# Append a unique identifier to the end of each accession to differentiate between copies of a genome
+# Read in the BLASTn output as a pandas table
+pos16S = pd.read_csv(f'{output_file}', names=['accession','pident','start','end', 'length','ev']) 
+copies_16S = len(pos16S)
+print(f'There are {copies_16S} total copies of the 16S region')
+# read in the multi-fasta from data_download script
+wgs_dict = SeqIO.to_dict(SeqIO.parse(f'{p_raw_data}/wgs.fasta', 'fasta')) 
+# define dictionary to store trimmed sequences
+trim_dict = {}
+# Create trim.csv output file
+trim_temp = pd.DataFrame(columns=['accession','pident','start','end','length', 'ev'])
+trim_temp.to_csv(f'{p_filt_data}/trim.csv', index=False)
+
+# Call the split function on our myresults.csv dataframe (pos16S)
+split_acc(pos16S)
+
+#%% ** 2.4 - Tie 16S Sequences to Unique Accessions
+# Using the newly named data, store our 16S copies into a new multifasta
+# Read in the resulting dataframe with proper formatting
+trim_16S = pd.read_csv(f'{p_filt_data}/trim.csv', dtype={'start':'Int32','end':'Int32'})
+# remove any reads that are shorter than our cutoff 
+trim_16S_f = trim_16S.mask(trim_16S['length'] < 1400).dropna()
+
+# apply the store_16S function across all rows in out BLAST output pd table
+trim_16S_f.apply(store_16S, axis=1)
+
+#%% ** 2.5 - Write the Multi-Fasta file
+# Using the dictionary created in part 4, write the 16S reads with their unique identifier to our output (trim.fasta)
+with open(f"{p_filt_data}/trim.fasta", "w") as output_handle:
+    SeqIO.write(trim_dict.values(), output_handle, "fasta")
+
+print('trim.fasta has been created')
+# END PART 2 ----
+
+#%% 3 - Edit Distance
+#%% ** 3.1 - Calculating Edit Distances
 print('Calculating Edit Distances')
 records = SeqIO.to_dict(SeqIO.parse(f"{p_filt_data}/trim.fasta", format = "fasta"))
 
@@ -284,8 +296,7 @@ comb_list = []
 for k in itertools.combinations(headers,2):
     comb_list.append(k)
     
-#%%
-# PART 3 ---    
+#%% ** 3.2 - Use ED to Create Matrix 
 #passing the ed function to the list of combinations list
 matrix_result = list(map(ed, comb_list))
 
@@ -306,8 +317,7 @@ get_ed_within_result = list(map(get_ed_within,within_coords))
 #passing the get_ed_between function to the list of between coordinates
 get_ed_between_result = list(map(get_ed_between,between_coords))    
 
-#%%
-# PART 4 ----
+#%% ** 3.3 - Store the Matrix and Vectors
 #sending the matrix, between_ed list, and within_ed list to csvs. 
 #these csvs will be used in R for hierarchical clustering
 ed_df.to_csv(f"{p_out}/matrix.csv")
@@ -315,5 +325,4 @@ pd.Series(within_ed).to_csv(f"{p_out}/within.csv", header = None)
 pd.Series(between_ed).to_csv(f"{p_out}/between.csv", header = None)
 
 print('Edit Distance has been calculated')
-# END ----
-#%%
+# END Part 3 ----
