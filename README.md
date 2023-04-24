@@ -6,7 +6,7 @@ Simple overview of use/purpose.
 
 An in-depth paragraph about your project and overview of use.
 
-### Installation Methods
+# Installation Methods
 
 ## Docker
 Docker is a free and open platform for developing, deploying, and running software. Docker isolates your applications from your infrastructure, allowing you to deliver software quickly. On this platform, you can manage your infrastructure the same way you manage your applications. Docker lets you package and run an application within a container, which is a loosely isolated environment.
