@@ -33,10 +33,11 @@ for i in folder_names:
 #%%
 # PART 1 ----
 # Download metadata
+print('Downloading metadata...')
 # Download the .tsv into ______ folder
 organism = 'Escherichia coli'
 fields = '--fields accession,assminfo-sequencing-tech'
-query = f"./../datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | ./../dataformat tsv genome {fields}" + f" > {p_raw_data}/ecoli.tsv"
+query = f"./datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | ./dataformat tsv genome {fields}" + f" > {p_raw_data}/ecoli.tsv"
 os.system(query)
 
 #%%
@@ -46,7 +47,8 @@ os.system(query)
 
 #replace the path with where the tsv file is
 tsv = pd.read_csv(f'{p_raw_data}/ecoli.tsv', delimiter= "\t") 
-
+init_count = len(tsv)
+print(f'There are {init_count} e. coli accessions')
 # drop rows that are not long read (pacbio, nanopore, ???)
 f = open(f'{p_raw_data}/longreads.tsv', 'w')
 
@@ -58,7 +60,7 @@ for row_num in tsv.index:
     
     if ('Nanopore' in seq_tech or 'PacBio' in seq_tech) and not any(x in seq_tech for x in remove):
         f.write(acc + "\t" + seq_tech + '\n')
-        
+
 f.close()
 #%%
 # PART 3 ---
@@ -66,6 +68,8 @@ f.close()
 # Store the accession column as a list
 acc = pd.read_csv(f'{p_raw_data}/longreads.tsv', sep = "\t", names = ['Accession', "Sequencing Technology"])
 acc_list = list(acc['Accession'].values)
+fin_count = len(acc_list)
+print(f'There are {fin_count} e. coli long-read accessions')
 # Iterate through the accession list and store the genomes in a multi fasta file
 for i in acc_list[0:5]:
     os.system(f'esearch -db nucleotide -query "{i}" | efetch -format fasta >> {p_raw_data}/wgs.fasta')
@@ -140,6 +144,7 @@ def store_16S(row):
 #%%
 # PART 2 ----
 # BLAST wgs sequences against 16S BLAST database
+print('Building BLAST database...')
 # Create 16S BLAST database:
 entrezQuery = "J01859" #determine query
 os.system(f'esearch -db nucleotide -query "{entrezQuery}" | efetch -format fasta > {p_blast}/16s.fasta')
@@ -153,13 +158,17 @@ output_file = f'{p_blast}/myresults.csv'
 # using the formatting requested
 formatting = '10 qacc pident qstart qend length evalue'
 # Call the BLASTn query
+print('Running the BLASTn query...')
 os.system(f'blastn -query {input_file} -db {p_blast}/16S -out {output_file} -outfmt "{formatting}"')
+print('BLAST complete')
 
 #%%
 # PART 3 ----
 # Append a unique identifier to the end of each accession to differentiate between copies of a genome
 # Read in the BLASTn output as a pandas table
 pos16S = pd.read_csv(f'{output_file}', names=['accession','pident','start','end', 'length','ev']) 
+copies_16S = len(pos16S)
+print(f'There are {copies_16S} total copies of the 16S region')
 # read in the multi-fasta from data_download script
 wgs_dict = SeqIO.to_dict(SeqIO.parse(f'{p_raw_data}/wgs.fasta', 'fasta')) 
 # define dictionary to store trimmed sequences
@@ -188,7 +197,7 @@ trim_16S_f.apply(store_16S, axis=1)
 with open(f"{p_filt_data}/trim.fasta", "w") as output_handle:
     SeqIO.write(trim_dict.values(), output_handle, "fasta")
 
-print('BLAST is complete')
+print('trim.fasta has been created')
 # END ----
 
 #%%
@@ -242,6 +251,7 @@ def get_ed_between(seq_pair):
 
 #%%
 # PART 2 ----
+print('Calculating Edit Distances')
 records = SeqIO.to_dict(SeqIO.parse(f"{p_filt_data}/trim.fasta", format = "fasta"))
 
 headers = [] 
