@@ -79,7 +79,4 @@ python3 main.py -s [Bacterial Species of Choice] -n [Number of Genomes to downlo
 ```
 
 ## Authors
-Aaron Myrold
-Niru Shanbhag
-Asad Shahzad
-Japani Doan
+Aaron Myrold, Niru Shanbhag, Asad Shahzad, Japani Doan
