@@ -13,25 +13,25 @@ This Docker image contains all required dependencies for this pipeline, as well 
 Before building the image, you must first download docker from https://www.docker.com for your appropriate opperating system. You will also need to create and connect a docker hub account in order for the dockerfile to pull the appropriate starting image. 
 Once docker is installed and you are logged in, you can continue to the next step -- cloning our repo
 
-To build the docker image, first clone the repository using either
+1. To build the docker image, first clone the repository using either
 ```
 git clone https://github.com/amyrold/LongReads
 ```
 or download the repo using the web/app GUI.
 
-Before we can build our image, we need to pull the ubuntu image that it is based on. To do this, run:
+2. Before we can build our image, we need to pull the ubuntu image that it is based on. To do this, run:
 ```
 sudo docker pull ubuntu
 ```
 
-Next, build the image using:
+3. Next, build the image using:
 ```
 sudo docker build LongReads --tag longreads:latest
 ```
 Here, we need to make sure that "LongReads" matches the name of the cloned repo. If you cloned with a different folder name than "LongReads" simply update the docker build command to reflect that. 
 
 
-Finally, create a Docker container with the longreads image using
+4. Finally, create a Docker container with the longreads image. Here, [container name] is any user-given name.
 ```
 sudo docker create -it --name [container name] longreads
 sudo docker start -i [container name]
@@ -40,7 +40,7 @@ or start the interactive session automatically using
 ```
 sudo docker run -it --name [container name] longreads
 ```
-where 'container name' is any user-given name.
+
 
 ## Pip Install
 If docker is undesirable, a pip requirements file is provided.
