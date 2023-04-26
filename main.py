@@ -211,7 +211,7 @@ print(f'There are {fin_count} {organism} long-read accessions')
 num = args.num
 if (num == None):
     # Iterate through the accession list and store the genomes in a multi fasta file
-    for i in acc_list[0:5]:
+    for i in acc_list:
         os.system(f'esearch -db nucleotide -query "{i}" | efetch -format fasta >> {p_raw_data}/wgs.fasta')
 else:
     # use the specified download number
