@@ -19,6 +19,11 @@ git clone https://github.com/amyrold/LongReads
 ```
 or download the repo using the web/app GUI.
 
+Before we can build our image, we need to pull the ubuntu image that it is based on. To do this, run:
+```
+sudo docker pull ubuntu
+```
+
 Next, build the image using:
 ```
 sudo docker build LongReads --tag longreads:latest
