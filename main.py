@@ -105,7 +105,7 @@ def trim_fa(accession, start, stop, direction):
     record = wgs_dict[accession[:(period_loc+2)]][start:stop]
     record.id = accession
     if direction == 'plus':
-        record.seq = record.seq.reverse_compliment()
+        record.seq = record.seq.reverse_complement()
     # slice the unique accession to the wgs accession and store the correct seq to trim dict
     trim_dict[accession] = record
     return
@@ -179,7 +179,7 @@ print('Downloading metadata...')
 # Download the .tsv into ______ folder
 organism = args.species
 fields = '--fields accession,assminfo-sequencing-tech'
-query = f"./datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | ./dataformat tsv genome {fields}" + f" > {p_raw_data}/metadata.tsv"
+query = f"datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | dataformat tsv genome {fields}" + f" > {p_raw_data}/metadata.tsv"
 os.system(query)
 
 #%% ** 1.2 - Filter by Sequencing Technology
