@@ -36,6 +36,7 @@ import itertools
 import numpy as np
 import editdistance
 import argparse
+from Bio.Seq import Seq
 
 # Set working directory
 # my_env = './LongReads/'
@@ -133,7 +134,13 @@ def ed(seq_pair):
     seq1 = records[seq1_header].seq
     seq2 = records[seq2_header].seq
     
-    ed_df[seq1_header][seq2_header] = editdistance.eval(seq1,seq2)
+    ED = editdistance.eval(seq1,seq2)
+    
+    if ED > 700:
+        seq1 = seq1.reverse_complement()
+        ed_df[seq1_header][seq2_header] = editdistance.eval(seq1,seq2)
+    else:
+        ed_df[seq1_header][seq2_header] = ED
 
 # FUNCTION 2    
 #populates the within_coords and between_coords lists, depending on if the pairs are within the same genome or different genomes
@@ -291,7 +298,7 @@ ed_df = pd.DataFrame(np.zeros((len(headers),len(headers))),
               columns=headers,
               index=headers)
 
-#comb list will be populated with all the different pairings of accession nums
+#comb list will be populated with all the different pairings of accession nums (order doesn't matter: AB is the same as BA, so it will only pick one)
 comb_list = []
 for k in itertools.combinations(headers,2):
     comb_list.append(k)
@@ -319,7 +326,7 @@ get_ed_between_result = list(map(get_ed_between,between_coords))
 
 #%% ** 3.3 - Store the Matrix and Vectors
 #sending the matrix, between_ed list, and within_ed list to csvs. 
-#these csvs will be used in R for hierarchical clustering
+#these csvs will be used in R 
 ed_df.to_csv(f"{p_out}/matrix.csv")
 pd.Series(within_ed).to_csv(f"{p_out}/within.csv", header = None)
 pd.Series(between_ed).to_csv(f"{p_out}/between.csv", header = None)
