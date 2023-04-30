@@ -32,6 +32,7 @@ Created on Thu Apr 20 18:07:04 2023
 import os
 import pandas as pd
 from Bio import SeqIO
+from Bio.Seq import Seq
 import itertools
 import numpy as np
 import editdistance
@@ -106,10 +107,12 @@ def rename_acc(row):
 
 # FUNCTION 3
 # Function to use the BLASTn output to trim and store in new dict 
-def trim_fa(accession, start, stop):
+def trim_fa(accession, start, stop, direction):
     period_loc = accession.find('.')
     record = wgs_dict[accession[:(period_loc+2)]][start:stop]
     record.id = accession
+    if direction == 'plus':
+        record.seq = record.seq.reverse_compliment()
     # slice the unique accession to the wgs accession and store the correct seq to trim dict
     trim_dict[accession] = record
     return
@@ -118,7 +121,7 @@ def trim_fa(accession, start, stop):
 # create function to send variables to trim_fa()
 def store_16S(row):
     # take accession, start, stop and use to store the shortened sequence into new seq list
-    trim_fa(row['accession'],row['start'], row['end'])
+    trim_fa(row['accession'],row['start'], row['end'], row['direction'])
     return
 
 #%% ** 0.4 - Define Edit Distance Functions
@@ -236,7 +239,7 @@ os.system(f'makeblastdb -in {p_blast}/16s.fasta -out {p_blast}/16S -title 16S -d
 input_file = f'{p_raw_data}/wgs.fasta'
 output_file = f'{p_blast}/myresults.csv'
 # using the formatting requested
-formatting = '10 qacc pident qstart qend length evalue'
+formatting = '10 qacc pident qstart qend length sstrand evalue'
 # Call the BLASTn query
 print('Running the BLASTn query...')
 os.system(f'blastn -query {input_file} -db {p_blast}/16S -out {output_file} -outfmt "{formatting}"')
@@ -245,7 +248,7 @@ print('BLAST complete')
 #%% ** 2.3 - Append Unique Identifier to 16S Accessions
 # Append a unique identifier to the end of each accession to differentiate between copies of a genome
 # Read in the BLASTn output as a pandas table
-pos16S = pd.read_csv(f'{output_file}', names=['accession','pident','start','end', 'length','ev']) 
+pos16S = pd.read_csv(f'{output_file}', names=['accession','pident','start','end', 'length', 'direction','ev']) 
 copies_16S = len(pos16S)
 print(f'There are {copies_16S} total copies of the 16S region')
 # read in the multi-fasta from data_download script
@@ -253,7 +256,7 @@ wgs_dict = SeqIO.to_dict(SeqIO.parse(f'{p_raw_data}/wgs.fasta', 'fasta'))
 # define dictionary to store trimmed sequences
 trim_dict = {}
 # Create trim.csv output file
-trim_temp = pd.DataFrame(columns=['accession','pident','start','end','length', 'ev'])
+trim_temp = pd.DataFrame(columns=['accession','pident','start','end','length','direction', 'ev'])
 trim_temp.to_csv(f'{p_filt_data}/trim.csv', index=False)
 
 # Call the split function on our myresults.csv dataframe (pos16S)
