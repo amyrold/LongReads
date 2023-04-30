@@ -37,7 +37,6 @@ import itertools
 import numpy as np
 import editdistance
 import argparse
-from Bio.Seq import Seq
 
 # Set working directory
 # my_env = './LongReads/'
@@ -81,13 +80,6 @@ def split_acc(seq_df):
     unique.apply(rename_acc, axis=1)
     return
 
-# filter myresults.csv by accession
-# order by qstart
-# if qstart < previous qend,
-# def drop_ol(row):
-#     subset = pos16S.where(pos16S['accession'] == row[0]).dropna().reset_index(drop='True')
-    
-#     return
 
 # FUNCTION 2
 # Define function to add _# to each 16S copy within the genome
