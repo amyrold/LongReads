@@ -1,7 +1,7 @@
 # LongReads
 
 ## Description
-LongReads is a bioinformatics application that will compare the variation of the 16S region within and between strains of a specified bacterial species. Based on a user-specified genome, LongReads will download metadata and filter to genomes that were sequenced using Long Read technology. It then determines and analyzes the intra-genomic and inter-genomic variation of the different 16S regions seen in each genome. 
+LongReads is a bioinformatics application that will compare the variation of the 16S region within and between strains of a specified bacterial species. Based on a user-specified genome, LongReads will download metadata and filter to genomes that were sequenced using Long Read technology (i.e. PacBio and Oxford Nanopore). It then analyzes and visualizes the intra-genomic and inter-genomic variation of the different 16S regions seen in each genome. 
 
 # Installation Methods
 
