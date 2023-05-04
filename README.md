@@ -67,7 +67,7 @@ chmod +x datasets dataformat
 ## Manual Installation
 To run this program manually, you will need to download the following packages before continuing to executing the program
 Here are the required dependancies to run main.py. They can all be installed via conda, pip, or apt-get.
-### Dependancies
+### Dependencies
 - entrez-direct
 - ncbi-datasets
 - blast
