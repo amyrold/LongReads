@@ -213,7 +213,7 @@ acc_list = list(acc['Accession'].values)
 fin_count = len(acc_list)
 print(f'There are {fin_count} {organism} long-read accessions')
 num = args.num
-if not os.path.isfile(f'{p_raw_data}/wgs.fasta}')
+if not os.path.isfile(f'{p_raw_data}/wgs.fasta'):
     if (num == None):
     # Iterate through the accession list and store the genomes in a multi fasta file
         for i in acc_list:
