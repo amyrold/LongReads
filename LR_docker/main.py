@@ -179,7 +179,7 @@ print('Downloading metadata...')
 # Download the .tsv into ______ folder
 organism = args.species
 fields = '--fields accession,assminfo-sequencing-tech'
-query = f"datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | dataformat tsv genome {fields}" + f" > {p_raw_data}/metadata.tsv"
+query = f"./datasets summary genome taxon '{organism}' --assembly-level 'complete'  --as-json-lines | ./dataformat tsv genome {fields}" + f" > {p_raw_data}/metadata.tsv"
 os.system(query)
 
 #%% ** 1.2 - Filter by Sequencing Technology
