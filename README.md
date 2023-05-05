@@ -5,7 +5,7 @@ LongReads is a bioinformatics application that will compare the variation of the
 
 # Installation Methods
 
-## Docker
+## LR_docker Process
 Docker is a free and open platform for developing, deploying, and running software. Docker isolates your applications from your infrastructure, allowing you to deliver software quickly. On this platform, you can manage your infrastructure the same way you manage your applications. Docker lets you package and run an application within a container, which is a loosely isolated environment.
 
 This Docker image contains all required dependencies for this pipeline, as well as the pipeline script (main.py). 
@@ -41,9 +41,8 @@ or start the interactive session automatically using
 sudo docker run -it --name [container name] longreads
 ```
 
-
-## Pip Install
-If docker is undesirable, a pip requirements file is provided.
+## LR_base Process
+If docker is undesirable, we have also provided a directory with just the main script, pip requirements, and .R visualization script.
 Here are the linux packages that are installed in the docker image. build-essential, ca-certs, and py-dev are all needed for biopython. They are likely installed already, but you can try installing them in case. The last two are required for the pipeline to run
 ```
 apt-get install -y build-essential
@@ -66,7 +65,7 @@ chmod +x datasets dataformat
 
 ## Manual Installation
 To run this program manually, you will need to download the following packages before continuing to executing the program
-Here are the required dependancies to run main.py. They can all be installed via conda, pip, or apt-get.
+Here are the required dependancies to run main.py. They can all be installed via conda, pip, or apt-get. 
 ### Dependencies
 - entrez-direct
 - ncbi-datasets
@@ -78,10 +77,14 @@ Here are the required dependancies to run main.py. They can all be installed via
 - matplotlib
 
 ## Executing program
-Once the container is up and running (or appropriate packages have been installed locally), the user can call the following command from within /LongReads to begin the pipeline. If unspecified, the '-n' flag will download all Long Read genomes of specified bacteria.
+Once the container is up and running (or appropriate packages have been installed locally), the user can call the following command from within /LongReads to begin the pipeline. If unspecified, the '-n' flag will download all Long Read genomes of specified bacteria. For testing the code, we reccomend using <50 genomes. 
 ```
 python3 main.py -s [Bacterial Species of Choice] -n [Number of Genomes to download]
 ```
+Once the main script has finished, the output files will be located in the 3_output directory. You will then need to run the LR_stats.R script to create the necessary figures. Do this by running:
+```
+```
+
 
 ## Authors
 Aaron Myrold, Niru Shanbhag, Asad Shahzad, Japani Doan
