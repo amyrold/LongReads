@@ -51,7 +51,7 @@ apt-get install -y python3-dev
 apt-get install -y ncbi-blast+
 apt-get install -y ncbi-entrez-direct
 ```
-Then, from within the LongReads directory, run this command to download the required pip packages. 
+Then, from within the LongReads/LR_base directory, run this command to download the required pip packages. 
 ```
 pip install -r requirements.txt
 ```
@@ -74,7 +74,6 @@ Here are the required dependancies to run main.py. They can all be installed via
 - numpy
 - biopython
 - editdistance
-- matplotlib
 
 ## Executing program
 Once the container is up and running (or appropriate packages have been installed locally), the user can call the following command from within /LongReads to begin the pipeline. If unspecified, the '-n' flag will download all Long Read genomes of specified bacteria. For testing the code, we reccomend using <50 genomes. 
