@@ -83,6 +83,7 @@ python3 main.py -s [Bacterial Species of Choice] -n [Number of Genomes to downlo
 ```
 Once the main script has finished, the output files will be located in the 3_output directory. You will then need to run the LR_stats.R script to create the necessary figures. Do this by running:
 ```
+Rscript LR_stats.R
 ```
 If you used the docker environment, we currently need to copy the 3_output directory back to your local machine before running the above command. To do this, run the following command:
 ```
