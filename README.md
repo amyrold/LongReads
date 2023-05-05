@@ -17,7 +17,7 @@ and once that finishes, run
 Rscript LR_stats.R
 ```
 
-## Output
+### Output
 Once the script has finished running, four directories should be created:
 * 1_raw_data
   *  metadata.tsv  - tab separated file listing the accession no and the associated sequencing technology (before filtering for long reads)
