@@ -5,6 +5,40 @@ LongReads is a bioinformatics application that will compare the variation of the
 
 # Installation Methods
 
+There are three directories currently provided. The first, LR_base is the version you should use if you'd like to handle installation of packages on your own. There may be some troublshooting involved due to different versions of the NCBI datasets and dataformat tools. The second, LR_docker, is a self-contained image of all tools and dependancies involved in our main.py script. It currently does not support the R script and there are directions below on how to navigate that. Finally, LR_wheeler is built specifically to work on the compbio server with packages installed as they are. There is also "test" data downloaded to decrease time in the data download portion of the script. Directions will be below as well. 
+
+## LR_wheeler process
+Here, we have included the metadata and wgs.fasta files to decrease time spent downloading data. These are for 10 genomes. The rest of the script should run as intended. There are two main steps for testing this pipeline. First, run
+```
+python3 main.py -s 'escherichia coli' -n 10
+```
+and once that finishes, run 
+```
+Rscript LR_stats.R
+```
+
+## Output
+Once the script has finished running, four directories should be created:
+* 1_raw_data
+  *  metadata.tsv  - tab separated file listing the accession no and the associated sequencing technology (before filtering for long reads)
+  *  longreads.tsv - tab separated file listing the accession no and the associated sequencing technology (after filtering for long reads)
+  *  wgs.fasta - a multi fasta file of genomes of the specified species (after filtering for long reads)
+* 2_filtered_data
+  *  trim.csv - a csv of the 16S rRNA blast results, only the copy number is appended to the accession number column
+  *  trim.fasta - a multi fasta file of the 16S rRNA copies
+* 3_output
+  *  between.csv - a csv of edit distances from the comparison of 16S copies between two genomes
+  *  within.csv - a csv of edit distances from the comparison of 16S copies within one genome
+  *  matrix.csv - a csv of the edit distance resultant matrix
+  *  output.txt - a text file of summary statistics from the LR_stats.R script
+  *  copies_per_genome.png - a plot produced from LR_stats.R showing the distribution of genomes with certain number of 16S rRNA copies
+  *  inter_intra_shared_unique.png - a plot produced from LR_stats.R showing the relative abundance of shared and unique 16S copies
+  *  boxplots.png - a boxplot of the distribution of edit distances based on type of variation
+  
+* 4_blast
+  *  16S.*** files making up the 16S database for BLAST
+  *  myresults.csv - a csv of the 16S rRNA blast results
+
 ## LR_docker Process
 Docker is a free and open platform for developing, deploying, and running software. Docker isolates your applications from your infrastructure, allowing you to deliver software quickly. On this platform, you can manage your infrastructure the same way you manage your applications. Docker lets you package and run an application within a container, which is a loosely isolated environment.
 
