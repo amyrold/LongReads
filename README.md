@@ -92,7 +92,7 @@ sudo docker cp [container name]:/LongReads/3_output LR_docker
 Once the script has finished running, four directories should be created:
 * 1_raw_data
   *  metadata.tsv  - tab separated file listing the accession no and the associated sequencing technology (before filtering for long reads)
-  *  longreads.tsv - tab separated file listing the accession no and the associated equencing technology (after filtering for long reads)
+  *  longreads.tsv - tab separated file listing the accession no and the associated sequencing technology (after filtering for long reads)
   *  wgs.fasta - a multi fasta file of genomes of the specified species (after filtering for long reads)
 * 2_filtered_data
   *  trim.csv - a csv of the 16S rRNA blast results, only the copy number is appended to the accession number column
