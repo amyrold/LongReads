@@ -96,14 +96,15 @@ Once the script has finished running, four directories should be created:
   *  wgs.fasta - a multi fasta file of genomes of the specified species (after filtering for long reads)
 * 2_filtered_data
   *  trim.csv - a csv of the 16S rRNA blast results, only the copy number is appended to the accession number column
-  *  trim.fasta - a multi fasta file of the 16S copies
+  *  trim.fasta - a multi fasta file of the 16S rRNA copies
 * 3_output
-  *  
-  *
-  *
-  *
-  *
-  *
+  *  between.csv - a csv of edit distances from the comparison of 16S copies between two genomes
+  *  within.csv - a csv of edit distances from the comparison of 16S copies within one genome
+  *  matrix.csv - a csv of the edit distance resultant matrix
+  *  output.txt - a text file of summary statistics from the LR_stats.R script
+  *  copies_per_genome.png - a plot produced from LR_stats.R showing the distribution of genomes with certain number of 16S rRNA copies
+  *  inter_intra_shared_unique.png - a plot produced from LR_stats.R showing the relative abundance of shared and unique 16S copies
+  *  boxplots.png - a boxplot of the distribution of edit distances based on type of variation
   
 * 4_blast
   *  16S.*** files making up the 16S database for BLAST
