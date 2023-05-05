@@ -74,7 +74,7 @@ ggplot(both, aes(x=label, y=ED, fill = label)) + geom_boxplot() + geom_violin(al
 dev.off()
 
 #Distribution of copies
-blast <- read.csv(paste(p_filt_data,"myresults.csv", sep = ""))
+blast <- read.csv(paste(p_blast,"myresults.csv", sep = ""))
 header <- c("accession", "pident", "qstart", "qend", "length", "strand", "evalue")
 colnames(blast) <- header
 
