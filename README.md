@@ -76,11 +76,11 @@ Here are the required dependancies to run main.py. They can all be installed via
 - editdistance
 
 ## Executing program
-Once the container is up and running (or appropriate packages have been installed locally), the user can call the following command from within /LongReads to begin the pipeline. If unspecified, the '-n' flag will download all Long Read genomes of specified bacteria. For testing the code, we reccomend using <50 genomes. 
+Once the container is up and running (or appropriate packages have been installed locally), the user can call the following command from within /LongReads/LR_base or /LongReads/LR_docker (depending on installation method) to begin the pipeline. If unspecified, the '-n' flag will download all Long Read genomes of specified bacteria. For testing the code, we reccomend using <50 genomes. 
 ```
 python3 main.py -s [Bacterial Species of Choice] -n [Number of Genomes to download]
 ```
-Once the main script has finished, the output files will be located in the 3_output directory. You will then need to run the LR_stats.R script to create the necessary figures. Do this by running:
+Once the main script has finished, the output files will be located in the 3_output directory in either /LongReads/LR_base or /LongReads/LR_docker (depending on installation method). You will then need to run the LR_stats.R script to create the necessary figures. Do this by running:
 ```
 Rscript LR_stats.R
 ```
