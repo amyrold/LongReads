@@ -88,7 +88,26 @@ If you used the docker environment, we currently need to copy the 3_output direc
 ```
 sudo docker cp [container name]:/LongReads/3_output LR_docker
 ```
-
+## Output
+Once the script has finished running, four directories should be created:
+* 1_raw_data
+  *  metadata.tsv  - tab separated file listing the accession no and the associated sequencing technology (before filtering for long reads)
+  *  longreads.tsv - tab separated file listing the accession no and the associated equencing technology (after filtering for long reads)
+  *  wgs.fasta - a multi fasta file of genomes of the specified species (after filtering for long reads)
+* 2_filtered_data
+  *  trim.csv - a csv of the 16S rRNA blast results, only the copy number is appended to the accession number column
+  *  trim.fasta - a multi fasta file of the 16S copies
+* 3_output
+  *  
+  *
+  *
+  *
+  *
+  *
+  
+* 4_blast
+  *  16S.*** files making up the 16S database for BLAST
+  *  myresults.csv - a csv of the 16S rRNA blast results
 
 ## Authors
 Aaron Myrold, Niru Shanbhag, Asad Shahzad, Japani Doan
