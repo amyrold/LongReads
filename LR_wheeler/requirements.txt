@@ -1,6 +1,0 @@
-argparse
-numpy
-pandas
-biopython
-editdistance
-matplotlib
