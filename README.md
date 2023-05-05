@@ -10,7 +10,7 @@ There are three directories currently provided. The first, LR_base is the versio
 ## LR_wheeler process
 Here, we have included the metadata and wgs.fasta files to decrease time spent downloading data. These are for 10 genomes. The rest of the script should run as intended. There are two main steps for testing this pipeline. First, run
 ```
-python3 main.py -s 'escherichia coli' -n 10
+python3 main.py -s 'Escherichia coli' -n 10
 ```
 and once that finishes, run 
 ```
